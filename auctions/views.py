@@ -195,7 +195,6 @@ class ListingViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         print(serializer)
         print("hereeeeeeeeeeeeeee")
-
         print(serializer.is_valid(raise_exception=True))
         self.perform_create(serializer)
         return Response( status=status.HTTP_201_CREATED)
@@ -203,7 +202,7 @@ class ListingViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         print("Inside perform_create Methoddddddddddddddd")
-        serializer.save(image=urlsafe_base64_decode(self.request.POST["image"]),created_by= User.objects.get(pk=self.request.data['created_by']))
+        serializer.save(created_by= User.objects.get(pk=self.request.data['created_by']))
 
 
 class CommentViewSet(viewsets.ModelViewSet):
