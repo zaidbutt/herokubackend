@@ -193,13 +193,13 @@ class ListingViewSet(viewsets.ModelViewSet):
     def create(self, request):
         print(request.data)
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        print(serializer.is_valid(raise_exception=True))
         self.perform_create(serializer)
-        
         return Response( status=status.HTTP_201_CREATED)
 
 
     def perform_create(self, serializer):
+        print("Inside perform_create Methoddddddddddddddd")
         serializer.save(created_by= User.objects.get(pk=self.request.data['created_by']))
 
 
