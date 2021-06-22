@@ -1,3 +1,5 @@
+import moment
+from datetime import datetime
 from django.template.loader import render_to_string
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -291,9 +293,20 @@ def closebid(request):
         max_bid = all_bids.aggregate(Max("bid_price"))
         bid = Bid.objects.get(bid_price=max_bid["bid_price__max"])
         sold = Listing.objects.get(pk = listing_id)
-        sold.bider = bid
-        sold.completed = True
-        sold.save()
+        date = moment.now()
+        expirydate = moment(sold.end_date)
+        diffr = moment.duration(moment(expirydate).diff(moment(date)))
+    
+        hours = int(diffr.asHours())
+        minutes = int(diffr.minutes())
+        seconds = int(diffr.seconds())
+        d = hours * 60 * 60 + minutes * 60 + seconds
+        if d <= 0:
+            sold.bider = bid
+            sold.completed = True
+            sold.save()
+            return JsonResponse({"message":"Bidding has been closed "},status=status.HTTP_202_ACCEPTED)
+        return JsonResponse({"message":"Error "},status=status.HTTP_406_NOT_ACCEPTABLE)
         
 
         return JsonResponse({"message":"ok"},status=status.HTTP_202_ACCEPTED)
